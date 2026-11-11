@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agromais — Escritório Contábil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap">
+<style>
+/* Skip artifact shell — fixed styles served beside every artifact.
+   Tokens, utilities and components (basecoat 1.0 markup, no CDN); artifacts
+   override --accent for their own identity. */
+:root {
+  color-scheme: light dark;
+  --accent: #2563eb;
+  --accent-contrast: #ffffff;
+  --accent-text: color-mix(in srgb, var(--accent) 72%, #000);
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --text: #14171f;
+  --text-muted: #5b6472;
+  --border: rgba(20, 23, 31, 0.10);
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(20, 23, 31, 0.08);
+  --space: 16px;
+  --success: #0a7a35;
+  --danger: #c0262d;
+  --warning: #8a5300;
+}
+/* Theme resolution. Without data-theme the viewer's system preference decides,
+   as it always did. With it, the artifact's own choice wins in BOTH directions:
+   a page that hardcodes one palette must not be handed the opposite set of
+   tokens by the machine it happens to be opened on. The dark values appear
+   twice because a media query cannot be folded into a selector list.
+   The attribute sits inside :where() so these blocks keep the specificity of a
+   bare :root — the page's own <style> is linked after this file and must go on
+   overriding any token it wants, exactly as it could before. */
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    --accent-text: color-mix(in srgb, var(--accent) 78%, #fff);
+    --bg: #101318;
+    --surface: #181c23;
+    --text: #eef1f6;
+    --text-muted: #9aa4b2;
+    --border: rgba(238, 241, 246, 0.12);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --success: #4ade80;
+    --danger: #f87171;
+    --warning: #fbbf24;
+  }
+}
+:root:where([data-theme="dark"]) {
+  color-scheme: dark;
+  --accent-text: color-mix(in srgb, var(--accent) 78%, #fff);
+  --bg: #101318;
+  --surface: #181c23;
+  --text: #eef1f6;
+  --text-muted: #9aa4b2;
+  --border: rgba(238, 241, 246, 0.12);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --success: #4ade80;
+  --danger: #f87171;
+  --warning: #fbbf24;
+}
+:root:where([data-theme="light"]) { color-scheme: light; }
+/* Pages generated before the shell had its own components still link the
+   basecoat CDN, which reads its own tokens and switches theme only on a
+   .dark class. Bridged to the shell's, whatever of it those pages use takes
+   the page's accent and follows the declared theme. Its --accent token is a
+   hover tint, renamed in its theme as --color-accent; the shell's --accent is
+   the brand colour, so the tint is derived from it here. */
+:root {
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--surface);
+  --popover-foreground: var(--text);
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-contrast);
+  --secondary: color-mix(in srgb, var(--text) 7%, var(--surface));
+  --secondary-foreground: var(--text);
+  --muted: color-mix(in srgb, var(--text) 5%, var(--surface));
+  --muted-foreground: var(--text-muted);
+  --color-accent: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  --color-accent-foreground: var(--text);
+  --destructive: var(--danger);
+  --input: var(--border);
+  --ring: var(--accent);
+}
+* { box-sizing: border-box; }
+/* The reset the pages were written against: they all linked basecoat, which
+   ships Tailwind's. Its components now live here, so the reset does too. */
+*, ::before, ::after, ::backdrop { margin: 0; padding: 0; border: 0 solid; }
+/* Preflight's rule too: without it a component class that sets display
+   (.alert, .card, .btn…) beats the hidden attribute and shows the element. */
+[hidden]:where(:not([hidden="until-found"])) { display: none !important; }
+.hidden { display: none !important; }
+h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+a { color: inherit; text-decoration: inherit; }
+b, strong { font-weight: bolder; }
+ol, ul, menu { list-style: none; }
+svg, video, canvas, iframe { display: block; vertical-align: middle; }
+button, input, select, textarea { color: inherit; background-color: transparent; border-radius: 0; }
+table { border-collapse: collapse; }
+hr { height: 0; color: inherit; border-top-width: 1px; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+
+.shell-container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.shell-section { padding: calc(var(--space) * 2) 0; }
+.shell-grid { display: grid; gap: var(--space); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.shell-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: var(--space); }
+.shell-footer { padding: 24px 0 40px; color: var(--text-muted); font-size: 13px; }
+
+.shell-hero { padding: calc(var(--space) * 3) 0 calc(var(--space) * 2); }
+.shell-hero h1 { font-size: clamp(26px, 4vw, 40px); line-height: 1.15; margin: 0 0 10px; text-wrap: balance; }
+.shell-hero p { color: var(--text-muted); max-width: 60ch; margin: 0; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--space);
+}
+
+.kpi { display: flex; flex-direction: column; gap: 4px; }
+.kpi .kpi-value { font-size: clamp(22px, 2.3vw, 28px); font-weight: 650; line-height: 1.1; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.kpi .kpi-label { font-size: 13px; color: var(--text-muted); }
+.kpi .kpi-delta { font-size: 12.5px; font-weight: 600; }
+.kpi .kpi-delta.up { color: var(--success); }
+.kpi .kpi-delta.down { color: var(--danger); }
+
+table.shell-table { border-collapse: collapse; width: 100%; font-size: 14px; }
+table.shell-table th {
+  text-align: left; font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-muted); font-weight: 600;
+}
+table.shell-table th, table.shell-table td { padding: 9px 12px 9px 0; border-bottom: 1px solid var(--border); }
+table.shell-table td.num, table.shell-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+
+.chart-box { width: 100%; min-height: 220px; }
+.chart-box svg { width: 100%; height: auto; display: block; }
+.chart-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; margin-top: 12px; font-size: 12.5px; color: var(--text-muted); }
+.chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chart-legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.chart-legend b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.muted { color: var(--text-muted); }
+.accent { color: var(--accent-text); }
+.shell-badge, .eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent-text);
+}
+/* A pill keeps its content width inside flex and grid columns, which would
+   otherwise stretch it across the card; a centred parent still centres it. */
+.shell-badge, .eyebrow, .badge { width: fit-content; max-width: 100%; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .shell-fade { animation: shell-fade 400ms ease both; }
+  @keyframes shell-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}
+
+/* Layout and type utilities: what the pages kept spelling in style="".
+   Spacing and type sizes follow Tailwind's scale; there is no Tailwind. */
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.stack { display: flex; flex-direction: column; gap: var(--space); }
+.between { justify-content: space-between; }
+.grow { flex: 1 1 0; min-width: 0; }
+.cols-2, .cols-3, .cols-4, .cols-5 { display: grid; gap: var(--space); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 720px) {
+  .cols-2, .cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cols-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1000px) { .cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.gap-1 { gap: 4px; } .gap-2 { gap: 8px; } .gap-3 { gap: 12px; } .gap-4 { gap: 16px; } .gap-6 { gap: 24px; }
+.m-0 { margin: 0; }
+.mt-1 { margin-top: 4px; } .mt-2 { margin-top: 8px; } .mt-3 { margin-top: 12px; } .mt-4 { margin-top: 16px; } .mt-6 { margin-top: 24px; }
+.mb-1 { margin-bottom: 4px; } .mb-2 { margin-bottom: 8px; } .mb-3 { margin-bottom: 12px; } .mb-4 { margin-bottom: 16px; } .mb-6 { margin-bottom: 24px; }
+.p-2 { padding: 8px; } .p-3 { padding: 12px; } .p-4 { padding: 16px; } .p-6 { padding: 24px; }
+.text-xs { font-size: 12px; } .text-sm { font-size: 14px; } .text-base { font-size: 16px; }
+.text-lg { font-size: 18px; } .text-xl { font-size: 20px; line-height: 1.35; }
+.text-2xl { font-size: 24px; line-height: 1.25; } .text-3xl { font-size: 30px; line-height: 1.2; }
+.font-medium { font-weight: 500; } .font-semibold { font-weight: 600; } .font-bold { font-weight: 700; }
+.text-right { text-align: right; } .text-center { text-align: center; }
+.nowrap { white-space: nowrap; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-variant-numeric: tabular-nums; }
+.w-full { width: 100%; }
+.text-success { color: var(--success); } .text-danger { color: var(--danger); } .text-warning { color: var(--warning); }
+
+/* Components, with basecoat 1.0 markup (variants and sizes are data
+   attributes) and the shell tokens, so a page needs neither component CSS
+   nor a CSS framework. An older page that also links basecoat gets these
+   rules after it, over the same properties. */
+button, input, select, textarea { font: inherit; }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 36px; padding: 0 14px; border: 1px solid transparent; border-radius: calc(var(--radius) - 2px);
+  background: var(--accent); color: var(--accent-contrast);
+  font-size: 14px; font-weight: 500; line-height: 1; white-space: nowrap; text-decoration: none; cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+.btn:hover { background: color-mix(in srgb, var(--accent) 86%, #000); }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
+.btn[data-variant="secondary"] { background: color-mix(in srgb, var(--text) 8%, var(--surface)); color: var(--text); }
+.btn[data-variant="secondary"]:hover { background: color-mix(in srgb, var(--text) 14%, var(--surface)); }
+.btn[data-variant="outline"] { background: var(--surface); color: var(--text); border-color: var(--border); }
+.btn[data-variant="ghost"] { background: transparent; color: var(--text); }
+.btn[data-variant="outline"]:hover, .btn[data-variant="ghost"]:hover { background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.btn[data-variant="destructive"] { background: var(--danger); color: var(--bg); }
+.btn[data-variant="destructive"]:hover { background: color-mix(in srgb, var(--danger) 86%, var(--text)); }
+.btn[data-variant="link"] { height: auto; padding: 0; background: none; color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
+.btn[data-size="sm"] { height: 30px; padding: 0 10px; font-size: 13px; }
+.btn[data-size="lg"] { height: 42px; padding: 0 20px; font-size: 15px; }
+.btn[data-size="icon"] { width: 36px; padding: 0; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px;
+  border: 1px solid transparent; border-radius: 999px; background: var(--accent); color: var(--accent-contrast);
+  font-size: 12px; font-weight: 600; line-height: 1.5; white-space: nowrap;
+}
+.badge[data-variant="secondary"] { background: color-mix(in srgb, var(--text) 8%, var(--surface)); color: var(--text); }
+.badge[data-variant="outline"] { background: transparent; color: var(--text); border-color: var(--border); }
+.badge[data-variant="destructive"] { background: color-mix(in srgb, var(--danger) 14%, var(--surface)); color: var(--danger); }
+
+.alert {
+  display: grid; gap: 4px; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface); color: var(--text); font-size: 14px;
+}
+.alert h2, .alert h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.alert p, .alert section { margin: 0; color: var(--text-muted); }
+.alert[data-variant="destructive"] { border-color: color-mix(in srgb, var(--danger) 45%, var(--border)); background: color-mix(in srgb, var(--danger) 7%, var(--surface)); color: var(--danger); }
+
+.card {
+  display: flex; flex-direction: column; gap: 16px; padding: 20px 0;
+  border: 1px solid var(--border); border-radius: calc(var(--radius) + 2px);
+  background: var(--surface); color: var(--text); box-shadow: var(--shadow);
+}
+.card > header, .card > section, .card > footer { padding: 0 20px; }
+.card > header { display: grid; gap: 4px; }
+.card > header h2, .card > header h3 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.3; }
+.card > header p { margin: 0; color: var(--text-muted); font-size: 14px; }
+.card > footer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+.input {
+  width: 100%; min-height: 36px; padding: 6px 12px; border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px);
+  background: var(--surface); color: var(--text); font-size: 14px;
+}
+textarea.input { min-height: 84px; resize: vertical; }
+.input::placeholder { color: var(--text-muted); }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 14px; font-weight: 500; }
+.field [role="alert"] { color: var(--danger); font-size: 13px; }
+
+dialog.dialog {
+  width: min(520px, calc(100vw - 32px)); max-height: calc(100vh - 32px); margin: auto; padding: 0;
+  border: 1px solid var(--border); border-radius: calc(var(--radius) + 4px);
+  background: var(--surface); color: var(--text); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+dialog.dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+dialog.dialog > div { display: grid; gap: 16px; padding: 24px; }
+dialog.dialog header { display: grid; gap: 4px; }
+dialog.dialog header h2 { margin: 0; font-size: 18px; font-weight: 600; }
+dialog.dialog header p { margin: 0; color: var(--text-muted); font-size: 14px; }
+dialog.dialog footer { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+
+.tabs { display: grid; gap: 12px; }
+.tabs > [role="tablist"] {
+  display: inline-flex; gap: 4px; width: fit-content; max-width: 100%; padding: 4px; overflow-x: auto;
+  border-radius: var(--radius); background: color-mix(in srgb, var(--text) 6%, var(--surface));
+}
+.tabs [role="tab"] {
+  padding: 6px 12px; border: 0; border-radius: calc(var(--radius) - 4px); background: transparent;
+  color: var(--text-muted); font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer;
+}
+.tabs [role="tab"][aria-selected="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+.tabs [role="tabpanel"][hidden] { display: none; }
+
+.accordion > details { border-bottom: 1px solid var(--border); }
+.accordion > details > summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 0; font-weight: 500; list-style: none; cursor: pointer;
+}
+.accordion > details > summary::-webkit-details-marker { display: none; }
+.accordion > details > summary::after { content: "+"; color: var(--text-muted); font-size: 18px; line-height: 1; }
+.accordion > details[open] > summary::after { content: "\2212"; }
+.accordion > details > :not(summary) { margin: 0 0 14px; color: var(--text-muted); }
+
+.toaster {
+  position: fixed; right: 16px; bottom: 16px; z-index: 50; display: flex; flex-direction: column-reverse; gap: 8px;
+  width: min(360px, calc(100vw - 32px)); pointer-events: none;
+}
+.toaster .toast { pointer-events: auto; transition: opacity 200ms ease, transform 200ms ease; }
+.toaster .toast[aria-hidden="true"] { opacity: 0; transform: translateY(8px); }
+.toaster .toast-content {
+  padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface); color: var(--text); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); font-size: 13px;
+}
+.toaster .toast-content h2 { margin: 0 0 2px; font-size: 14px; font-weight: 600; }
+.toaster .toast-content p { margin: 0; color: var(--text-muted); }
+
+/* skipUI building blocks. */
+.skip-table-search { max-width: 320px; margin-bottom: 12px; }
+.skip-table-wrap { overflow-x: auto; }
+table.shell-table th[data-sort] { cursor: pointer; user-select: none; }
+table.shell-table th[aria-sort="ascending"]::after { content: " \25B2"; font-size: 9px; }
+table.shell-table th[aria-sort="descending"]::after { content: " \25BC"; font-size: 9px; }
+table.shell-table td.skip-table-empty { color: var(--text-muted); text-align: center; padding: 24px 0; }
+.skip-pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+.toaster .toast[data-type="success"] .toast-content { border-left: 3px solid var(--success); }
+.toaster .toast[data-type="error"] .toast-content { border-left: 3px solid var(--danger); }
+
+</style>
+<script>
+/* Skip artifact shell — fixed helpers served beside every artifact. */
+(function () {
+  "use strict";
+
+  var fmt = {
+    num: function (v, opts) { return new Intl.NumberFormat("pt-BR", opts || {}).format(v); },
+    brl: function (v) { return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v); },
+    pct: function (v) { return new Intl.NumberFormat("pt-BR", { style: "percent", maximumFractionDigits: 1 }).format(v); },
+    compact: function (v) { return new Intl.NumberFormat("pt-BR", { notation: "compact", maximumFractionDigits: 1 }).format(v); },
+    brlCompact: function (v) { return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact", maximumFractionDigits: 1 }).format(v); }
+  };
+
+  // axisLabels formats the five y-axis ticks in the unit the chart declared
+  // (percent, BRL or plain numbers), compact so long values never clip, with
+  // the fewest decimals that still print every tick exactly (1,5 mi, not 2 mi).
+  function axisLabels(format, ticks) {
+    function at(digits) {
+      var opts = { notation: "compact", maximumFractionDigits: digits };
+      if (format === "pct") opts = { style: "percent", maximumFractionDigits: digits };
+      else if (format === "brl") opts = { style: "currency", currency: "BRL", notation: "compact", maximumFractionDigits: digits };
+      var nf = new Intl.NumberFormat("pt-BR", opts);
+      return ticks.map(function (t) { return nf.format(t); });
+    }
+    for (var digits = 0; digits < 2; digits++) {
+      if (at(digits).join("|") === at(digits + 1).join("|")) return at(digits);
+    }
+    return at(2);
+  }
+
+  // yAxisPad formats the ticks and measures the left padding they need from
+  // the longest one; drawYAxis then draws the grid and the labels.
+  function yAxisPad(format, max) {
+    var labels = axisLabels(format, [0, max / 4, max / 2, (max * 3) / 4, max]);
+    var longest = labels.reduce(function (m, l) { return Math.max(m, l.length); }, 0);
+    return { labels: labels, padL: Math.max(40, Math.round(longest * 6.2) + 14) };
+  }
+  function drawYAxis(svg, axis, W, padR, padT, plotH) {
+    for (var g = 0; g <= 4; g++) {
+      var gy = padT + plotH - (plotH * g) / 4;
+      svg.appendChild(svgEl("line", { x1: axis.padL, y1: gy, x2: W - padR, y2: gy, stroke: "currentColor", "stroke-opacity": 0.08 }));
+      var lbl = svgEl("text", { x: axis.padL - 8, y: gy + 4, "text-anchor": "end", "font-size": 10, fill: mutedColor() });
+      lbl.textContent = axis.labels[g];
+      svg.appendChild(lbl);
+    }
+  }
+
+  // xLabelStep: show every k-th category label so labels never overlap, and
+  // always the last one (counted back from the end).
+  function xLabelStep(labels, step) {
+    var longest = labels.reduce(function (m, l) { return Math.max(m, String(l).length); }, 0);
+    return Math.max(1, Math.ceil((longest * 6.4 + 8) / Math.max(step, 1)));
+  }
+  function drawXLabel(svg, text, x, y, W, edgeGuard) {
+    var anchor = "middle";
+    var half = String(text).length * 3.2;
+    if (edgeGuard && x - half < 4) anchor = "start";
+    if (edgeGuard && x + half > W - 4) anchor = "end";
+    var tx = svgEl("text", { x: x, y: y, "text-anchor": anchor, "font-size": 11, fill: mutedColor() });
+    tx.textContent = text;
+    svg.appendChild(tx);
+  }
+  // categoryLines fits a bar's category name in its slot: one line, two lines
+  // split at a space, or cut with "…". A bar without its name can't be read, so
+  // categories are never skipped; null when the slot is too narrow for that.
+  function categoryLines(text, slot) {
+    var fit = Math.floor((slot - 6) / 6.4);
+    var s = String(text);
+    if (fit < 4) return null;
+    if (s.length <= fit) return [s];
+    var cut = function (t) { return t.length <= fit ? t : t.slice(0, fit - 1).trimEnd() + "…"; };
+    var best = -1;
+    for (var i = 0; i < s.length; i++) {
+      if (s[i] === " " && (best < 0 || Math.abs(s.length / 2 - i) < Math.abs(s.length / 2 - best))) best = i;
+    }
+    if (best < 0) return [cut(s)];
+    return [cut(s.slice(0, best)), cut(s.slice(best + 1))];
+  }
+  function legend(el, items) {
+    var box = document.createElement("div");
+    box.className = "chart-legend";
+    items.forEach(function (it) {
+      var row = document.createElement("span");
+      var dot = document.createElement("i");
+      dot.style.background = it.color;
+      row.appendChild(dot);
+      row.appendChild(document.createTextNode((it.label || "") + (it.value ? " " : "")));
+      if (it.value) {
+        var v = document.createElement("b");
+        v.textContent = it.value;
+        row.appendChild(v);
+      }
+      box.appendChild(row);
+    });
+    resolve(el).appendChild(box);
+  }
+  var seriesPalette = ["#1baf7a", "#eda100", "#e34948", "#4a3aa7", "#e87ba4", "#0ea5b7"];
+
+  // format accepts a function OR one of the fmt names ("num" | "brl" | "pct").
+  // A page's function may return nothing or throw: the chart prints its
+  // number instead of taking the rest of the page script down with it.
+  function coerceFormat(spec) {
+    if (typeof spec === "function") {
+      return function (v) {
+        try {
+          var out = spec(v);
+          return out == null ? "" : String(out);
+        } catch (e) {
+          return fmt.num(v);
+        }
+      };
+    }
+    if (typeof spec === "string" && fmt[spec]) return fmt[spec];
+    return function (v) { return fmt.num(v); };
+  }
+
+  function accent() {
+    return getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#2563eb";
+  }
+  function mutedColor() {
+    return getComputedStyle(document.documentElement).getPropertyValue("--text-muted").trim() || "#5b6472";
+  }
+  function svgEl(tag, attrs) {
+    var el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+  function frame(el, w, h) {
+    var svg = svgEl("svg", { viewBox: "0 0 " + w + " " + h, role: "img" });
+    el = resolve(el);
+    el.innerHTML = "";
+    el.appendChild(svg);
+    return svg;
+  }
+
+  // maxOf guards the axis scale: empty values would give -Infinity (truthy,
+  // so "|| 1" can't catch it) and a non-positive max would flip the chart.
+  // finite reads a chart value as a number, 0 when it is not one (NaN,
+  // Infinity, a stray string), so one bad value cannot blank the axis.
+  function finite(v) {
+    var n = +v;
+    return isFinite(n) ? n : 0;
+  }
+
+  function maxOf(values) {
+    var m = values.length ? Math.max.apply(null, values.map(finite)) : 0;
+    return m > 0 ? m : 1;
+  }
+
+  // labelsFor pads or trims the category names to the n points drawn: pages
+  // pass labels and values of different lengths, and one throw here loses
+  // every section the page renders after the chart.
+  function labelsFor(cfg, n) {
+    var out = [];
+    for (var i = 0; i < n; i++) out.push(cfg.labels && cfg.labels[i] != null ? String(cfg.labels[i]) : "");
+    return out;
+  }
+
+  // niceMax rounds the scale up so the four grid steps land on round values
+  // (1, 1.5, 2, 2.5, 3, 4, 5, 6 or 8 × 10^k) and the tick labels read exactly.
+  function niceMax(max) {
+    var raw = max / 4;
+    var mag = Math.pow(10, Math.floor(Math.log10(raw)));
+    var res = raw / mag;
+    var steps = [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
+    var nice = steps.filter(function (s) { return s >= res - 1e-9; })[0];
+    return nice * mag * 4;
+  }
+
+  // bar(el, {labels:[], values:[], color?, format?}) — vertical bar chart.
+  function bar(el, cfg) {
+    var W = 640, H = 280, padB = 30, padT = 12, padR = 12;
+    var max = niceMax(maxOf(cfg.values));
+    var axis = yAxisPad(cfg.format, max);
+    var svg = frame(el, W, H);
+    var n = cfg.values.length;
+    var labels = labelsFor(cfg, n);
+    var plotW = W - axis.padL - padR;
+    var step = plotW / n, bw = Math.min(step * 0.62, 64);
+    var names = labels.map(function (l) { return categoryLines(l, step); });
+    var named = names.every(Boolean);
+    if (named && names.some(function (l) { return l.length > 1; })) padB = 42;
+    var plotH = H - padT - padB;
+    var color = cfg.color || accent();
+    var f = coerceFormat(cfg.format);
+    var every = xLabelStep(labels, step);
+    drawYAxis(svg, axis, W, padR, padT, plotH);
+    cfg.values.forEach(function (v, i) {
+      var bh = Math.max(0, (finite(v) / max) * plotH);
+      var x = axis.padL + i * step + (step - bw) / 2;
+      var y = padT + plotH - bh;
+      var r = svgEl("rect", { x: x, y: y, width: bw, height: bh, rx: 4, fill: (cfg.colors && cfg.colors[i]) || color });
+      var t = svgEl("title", {});
+      t.textContent = labels[i] + ": " + f(v);
+      r.appendChild(t);
+      svg.appendChild(r);
+      if (named) {
+        names[i].forEach(function (text, li) {
+          drawXLabel(svg, text, x + bw / 2, padT + plotH + 18 + li * 13, W, false);
+        });
+      } else if ((n - 1 - i) % every === 0) {
+        drawXLabel(svg, labels[i], x + bw / 2, H - 10, W, false);
+      }
+    });
+  }
+
+  // line(el, {labels:[], values:[] | series:[{label, values, color?}], color?, format?})
+  // — one line, or several series on one scale with a legend under the chart.
+  function line(el, cfg) {
+    var W = 640, H = 280, padB = 30, padT = 12, padR = 16;
+    var series = cfg.series && cfg.series.length
+      ? cfg.series
+      : [{ label: "", values: cfg.values || [], color: cfg.color }];
+    var all = [];
+    series.forEach(function (s) { all = all.concat(s.values || []); });
+    var max = niceMax(maxOf(all));
+    var axis = yAxisPad(cfg.format, max);
+    var svg = frame(el, W, H);
+    var n = series.reduce(function (m, s) { return Math.max(m, (s.values || []).length); }, 0);
+    var labels = labelsFor(cfg, n);
+    var plotW = W - axis.padL - padR, plotH = H - padT - padB;
+    var f = coerceFormat(cfg.format);
+    drawYAxis(svg, axis, W, padR, padT, plotH);
+    var xs = labels.map(function (_, i) { return axis.padL + (n === 1 ? plotW / 2 : (plotW * i) / (n - 1)); });
+    var every = xLabelStep(labels, n > 1 ? plotW / (n - 1) : plotW);
+    labels.forEach(function (label, i) {
+      if ((n - 1 - i) % every === 0) drawXLabel(svg, label, xs[i], H - 10, W, true);
+    });
+    var colors = series.map(function (s, si) {
+      return s.color || (si === 0 ? (cfg.color || accent()) : seriesPalette[(si - 1) % seriesPalette.length]);
+    });
+    series.forEach(function (s, si) {
+      var color = colors[si];
+      var pts = (s.values || []).map(function (v, i) { return [xs[i], padT + plotH - (finite(v) / max) * plotH]; });
+      var d = pts.map(function (p, i) { return (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" ");
+      svg.appendChild(svgEl("path", { d: d, fill: "none", stroke: color, "stroke-width": 2, "stroke-linejoin": "round" }));
+      pts.forEach(function (p, i) {
+        var c = svgEl("circle", { cx: p[0], cy: p[1], r: 3.5, fill: color });
+        var t = svgEl("title", {});
+        t.textContent = (s.label ? s.label + " · " : "") + labels[i] + ": " + f(s.values[i]);
+        c.appendChild(t);
+        svg.appendChild(c);
+      });
+    });
+    if (series.length > 1) {
+      legend(el, series.map(function (s, si) { return { label: s.label, color: colors[si] }; }));
+    }
+  }
+
+  // donut(el, {labels:[], values:[], colors?, format?, center?, centerLabel?, legend?})
+  // — donut with a short total in the centre (compact, in the declared unit)
+  // and, with legend: true, the labels and shares listed under it.
+  function donut(el, cfg) {
+    var W = 320, H = 280, cx = W / 2, cy = H / 2, R = 92, r = 58;
+    var svg = frame(el, W, H);
+    // At 100% of a wide container the donut outgrows the height pages give
+    // the box and spills over the next section: keep it at its own size.
+    svg.style.maxWidth = W + "px";
+    svg.style.margin = "0 auto";
+    var values = cfg.values.map(finite);
+    var labels = labelsFor(cfg, values.length);
+    var sum = values.reduce(function (a, b) { return a + b; }, 0);
+    var total = sum || 1;
+    var palette = cfg.colors || [accent()].concat(seriesPalette);
+    // The hover keeps the full value; the centre has room for a short one.
+    var full = coerceFormat(cfg.format);
+    var short = typeof cfg.format === "function" ? full : cfg.format === "brl" ? fmt.brlCompact : fmt.compact;
+    var a0 = -Math.PI / 2;
+    values.forEach(function (v, i) {
+      var a1 = a0 + (v / total) * Math.PI * 2;
+      var large = a1 - a0 > Math.PI ? 1 : 0;
+      var p = ["M", cx + R * Math.cos(a0), cy + R * Math.sin(a0),
+        "A", R, R, 0, large, 1, cx + R * Math.cos(a1), cy + R * Math.sin(a1),
+        "L", cx + r * Math.cos(a1), cy + r * Math.sin(a1),
+        "A", r, r, 0, large, 0, cx + r * Math.cos(a0), cy + r * Math.sin(a0), "Z"].join(" ");
+      var path = svgEl("path", { d: p, fill: palette[i % palette.length] });
+      var t = svgEl("title", {});
+      t.textContent = labels[i] + ": " + full(v) + " (" + fmt.pct(v / total) + ")";
+      path.appendChild(t);
+      svg.appendChild(path);
+      a0 = a1;
+    });
+    // A share chart has no total worth printing: without its own centre text
+    // the caption alone takes the middle.
+    var text = cfg.center != null ? String(cfg.center) : (cfg.format === "pct" ? "" : short(sum));
+    if (text) {
+      var size = text.length > 9 ? 14 : text.length > 7 ? 17 : 20;
+      var center = svgEl("text", { x: cx, y: cfg.centerLabel ? cy + 1 : cy + 6, "text-anchor": "middle", "font-size": size, "font-weight": 650, fill: "currentColor" });
+      center.textContent = text;
+      svg.appendChild(center);
+    }
+    if (cfg.centerLabel) {
+      var cap = svgEl("text", { x: cx, y: text ? cy + 19 : cy + 5, "text-anchor": "middle", "font-size": 11, fill: mutedColor() });
+      cap.textContent = cfg.centerLabel;
+      svg.appendChild(cap);
+    }
+    if (cfg.legend) {
+      legend(el, labels.map(function (label, i) {
+        return { label: label, color: palette[i % palette.length], value: fmt.pct(values[i] / total) };
+      }));
+    }
+  }
+
+  // ---- Page building blocks: what dashboards and small systems kept
+  // re-implementing — a searchable sortable table, a KPI row, tabs, toasts,
+  // dialogs, saved state and mock data. Every call is opt-in, so a page that
+  // brings its own versions keeps them.
+
+  function resolve(target) {
+    return typeof target === "string" ? document.querySelector(target) : target;
+  }
+
+  function node(tag, className, text) {
+    var el = document.createElement(tag);
+    if (className) el.className = className;
+    if (text != null) el.textContent = text;
+    return el;
+  }
+
+  function isNumberColumn(col) {
+    return col.align === "right" || col.format === "num" || col.format === "brl" || col.format === "pct";
+  }
+
+  function cellText(col, row) {
+    var value = row[col.key];
+    if (value == null) return "";
+    return col.format ? coerceFormat(col.format)(value) : String(value);
+  }
+
+  function compareValues(a, b) {
+    if (typeof a === "number" && typeof b === "number") return a - b;
+    return String(a == null ? "" : a).localeCompare(String(b == null ? "" : b), "pt-BR", { numeric: true });
+  }
+
+  // table(el, {columns, rows, search?, pageSize?, empty?, onRowClick?}) — a
+  // table.shell-table with sortable headers, an optional search box and
+  // pager. A column is {key, label, format?, align?, sortable? (true),
+  // render?(value, row) returning a Node or an HTML string — the page writes
+  // its cell templates as markup}. Plain values are always set as text.
+  // Returns {setRows, rows}.
+  function table(target, cfg) {
+    var root = resolve(target);
+    var cols = cfg.columns || [];
+    var pageSize = cfg.pageSize || 0;
+    var state = { rows: (cfg.rows || []).slice(), query: "", key: null, dir: 1, page: 0 };
+    root.innerHTML = "";
+    if (cfg.search) {
+      var search = node("input", "input skip-table-search");
+      search.type = "search";
+      search.placeholder = typeof cfg.search === "string" ? cfg.search : "Buscar…";
+      search.setAttribute("aria-label", search.placeholder);
+      search.addEventListener("input", function () {
+        state.query = search.value.trim().toLowerCase();
+        state.page = 0;
+        draw();
+      });
+      root.appendChild(search);
+    }
+    var tableEl = node("table", "shell-table");
+    var headRow = node("tr");
+    var heads = cols.map(function (col) {
+      var th = node("th", isNumberColumn(col) ? "num" : "", col.label == null ? col.key : col.label);
+      th.scope = "col";
+      if (col.sortable !== false) {
+        var toggle = function () {
+          state.dir = state.key === col.key ? -state.dir : 1;
+          state.key = col.key;
+          draw();
+        };
+        th.setAttribute("data-sort", col.key);
+        th.tabIndex = 0;
+        th.addEventListener("click", toggle);
+        th.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+        });
+      }
+      headRow.appendChild(th);
+      return th;
+    });
+    var thead = node("thead");
+    var tbody = node("tbody");
+    var wrap = node("div", "skip-table-wrap");
+    var pager = node("div", "skip-pager");
+    thead.appendChild(headRow);
+    tableEl.appendChild(thead);
+    tableEl.appendChild(tbody);
+    wrap.appendChild(tableEl);
+    root.appendChild(wrap);
+    if (pageSize) root.appendChild(pager);
+
+    function visibleRows() {
+      var rows = state.rows;
+      if (state.query) {
+        rows = rows.filter(function (row) {
+          return cols.some(function (col) { return cellText(col, row).toLowerCase().indexOf(state.query) >= 0; });
+        });
+      }
+      if (state.key) {
+        var key = state.key, dir = state.dir;
+        rows = rows.slice().sort(function (a, b) { return dir * compareValues(a[key], b[key]); });
+      }
+      return rows;
+    }
+
+    function drawRow(row) {
+      var tr = node("tr");
+      cols.forEach(function (col) {
+        var td = node("td", isNumberColumn(col) ? "num" : "");
+        if (!col.render) {
+          td.textContent = cellText(col, row);
+        } else {
+          var content = col.render(row[col.key], row);
+          if (content instanceof Node) td.appendChild(content);
+          else td.innerHTML = content == null ? "" : String(content);
+        }
+        tr.appendChild(td);
+      });
+      // The row stays a row (no role) and takes focus, so a keyboard reaches
+      // the same action; keys pressed on a control inside a cell are its own.
+      if (cfg.onRowClick) {
+        tr.style.cursor = "pointer";
+        tr.tabIndex = 0;
+        tr.addEventListener("click", function () { cfg.onRowClick(row); });
+        tr.addEventListener("keydown", function (e) {
+          if (e.target !== tr || (e.key !== "Enter" && e.key !== " ")) return;
+          e.preventDefault();
+          cfg.onRowClick(row);
+        });
+      }
+      return tr;
+    }
+
+    function pagerButton(label, disabled, step) {
+      var button = node("button", "btn", label);
+      button.type = "button";
+      button.setAttribute("data-variant", "outline");
+      button.setAttribute("data-size", "sm");
+      button.disabled = disabled;
+      button.addEventListener("click", function () { state.page += step; draw(); });
+      return button;
+    }
+
+    function draw() {
+      var rows = visibleRows();
+      heads.forEach(function (th, i) {
+        if (cols[i].key === state.key) th.setAttribute("aria-sort", state.dir > 0 ? "ascending" : "descending");
+        else th.removeAttribute("aria-sort");
+      });
+      var pages = pageSize ? Math.max(1, Math.ceil(rows.length / pageSize)) : 1;
+      state.page = Math.min(state.page, pages - 1);
+      var shown = pageSize ? rows.slice(state.page * pageSize, (state.page + 1) * pageSize) : rows;
+      tbody.innerHTML = "";
+      if (!shown.length) {
+        var empty = node("td", "skip-table-empty", cfg.empty || "Nenhum registro encontrado.");
+        empty.colSpan = cols.length;
+        tbody.appendChild(node("tr")).appendChild(empty);
+      }
+      shown.forEach(function (row) { tbody.appendChild(drawRow(row)); });
+      if (!pageSize) return;
+      pager.innerHTML = "";
+      var from = rows.length ? state.page * pageSize + 1 : 0;
+      pager.appendChild(node("span", "", from + "–" + Math.min(rows.length, (state.page + 1) * pageSize) + " de " + rows.length));
+      var nav = node("div", "row gap-2");
+      nav.appendChild(pagerButton("Anterior", state.page === 0, -1));
+      nav.appendChild(pagerButton("Próxima", state.page >= pages - 1, 1));
+      pager.appendChild(nav);
+    }
+
+    draw();
+    return {
+      setRows: function (rows) { state.rows = rows.slice(); draw(); },
+      rows: visibleRows
+    };
+  }
+
+  // kpis(el, [{label, value, format?, delta?, hint?}]) — KPI cards in a
+  // responsive grid; delta is a fraction (0.12 renders as ▲ 12%).
+  function kpis(target, items) {
+    var root = resolve(target);
+    root.innerHTML = "";
+    root.classList.add("shell-grid");
+    items.forEach(function (item) {
+      var card = node("div", "panel kpi");
+      card.appendChild(node("span", "kpi-label", item.label));
+      // Large money values go compact ("R$ 27,5 mi"): the full amount does
+      // not fit a KPI card at four per row.
+      var kpiFormat = item.format === "brl" && Math.abs(item.value) >= 1e6 ? fmt.brlCompact : (item.format ? coerceFormat(item.format) : null);
+      card.appendChild(node("span", "kpi-value", kpiFormat ? kpiFormat(item.value) : String(item.value)));
+      if (typeof item.delta === "number") {
+        var up = item.delta >= 0;
+        card.appendChild(node("span", "kpi-delta " + (up ? "up" : "down"), (up ? "▲ " : "▼ ") + fmt.pct(Math.abs(item.delta))));
+      }
+      if (item.hint) card.appendChild(node("span", "kpi-label", item.hint));
+      root.appendChild(card);
+    });
+  }
+
+  // badge(text, variant?) — a .badge node for table cells and lists;
+  // variant is "secondary" | "outline" | "destructive" (default: primary).
+  function badge(text, variant) {
+    var el = node("span", "badge", text);
+    if (variant) el.setAttribute("data-variant", variant);
+    return el;
+  }
+
+  // tabs(el) — wires one .tabs block: [role=tab] buttons inside
+  // [role=tablist], each with aria-controls naming its [role=tabpanel].
+  function tabs(target) {
+    var root = resolve(target);
+    var buttons = Array.prototype.slice.call(root.querySelectorAll('[role="tab"]'));
+    function select(chosen) {
+      buttons.forEach(function (b) {
+        var on = b === chosen;
+        b.setAttribute("aria-selected", on ? "true" : "false");
+        b.tabIndex = on ? 0 : -1;
+        var panel = document.getElementById(b.getAttribute("aria-controls"));
+        if (panel) panel.hidden = !on;
+      });
+    }
+    buttons.forEach(function (b, i) {
+      b.addEventListener("click", function () { select(b); });
+      b.addEventListener("keydown", function (e) {
+        var step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+        if (!step) return;
+        var next = buttons[(i + step + buttons.length) % buttons.length];
+        next.focus();
+        select(next);
+      });
+    });
+    select(buttons.filter(function (b) { return b.getAttribute("aria-selected") === "true"; })[0] || buttons[0]);
+  }
+
+  // toast(message, {type?: "success" | "error", title?, duration?}) — a
+  // .toast in a shared .toaster at the bottom of the page.
+  function toast(message, opts) {
+    opts = opts || {};
+    var toaster = document.querySelector(".toaster") || document.body.appendChild(node("div", "toaster"));
+    var item = node("div", "toast");
+    item.setAttribute("role", opts.type === "error" ? "alert" : "status");
+    item.setAttribute("aria-hidden", "true");
+    if (opts.type) item.setAttribute("data-type", opts.type);
+    var content = node("div", "toast-content");
+    var section = node("section");
+    if (opts.title) section.appendChild(node("h2", "", opts.title));
+    section.appendChild(node("p", "", message));
+    content.appendChild(section);
+    item.appendChild(content);
+    toaster.appendChild(item);
+    requestAnimationFrame(function () { item.setAttribute("aria-hidden", "false"); });
+    setTimeout(function () {
+      item.setAttribute("aria-hidden", "true");
+      setTimeout(function () { item.remove(); }, 400);
+    }, opts.duration || 3000);
+  }
+
+  // Dialogs are native <dialog class="dialog">: a [data-dialog-open="id"]
+  // anywhere opens one, a [data-dialog-close] inside closes it, and a click on
+  // its backdrop closes it too. Plain dialog.showModal()/close() still work.
+  document.addEventListener("click", function (e) {
+    var target = e.target;
+    if (!(target instanceof Element)) return;
+    var opener = target.closest("[data-dialog-open]");
+    if (opener) {
+      var dialog = document.getElementById(opener.getAttribute("data-dialog-open"));
+      if (dialog && dialog.showModal && !dialog.open) dialog.showModal();
+      return;
+    }
+    var closer = target.closest("[data-dialog-close]");
+    if (closer && closer.closest("dialog")) {
+      closer.closest("dialog").close();
+      return;
+    }
+    if (target.tagName === "DIALOG" && target.classList.contains("dialog") && target.open) target.close();
+  });
+
+  // store(key, fallback) — JSON state in localStorage that never throws (a
+  // private window or a full quota falls back to memory): {get, set, update}.
+  function store(key, fallback) {
+    var memory;
+    // Set while the last write did not reach localStorage: what is stored
+    // there is older than memory until a write goes through again.
+    var unsaved = false;
+    var initial = function () { return fallback === undefined ? undefined : JSON.parse(JSON.stringify(fallback)); };
+    function get() {
+      if (!unsaved) {
+        try {
+          var raw = localStorage.getItem(key);
+          if (raw != null) return JSON.parse(raw);
+        } catch (e) { /* storage unavailable: memory below */ }
+      }
+      return memory !== undefined ? memory : initial();
+    }
+    function set(value) {
+      memory = value;
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+        unsaved = false;
+      } catch (e) {
+        unsaved = true;
+      }
+      return value;
+    }
+    return { get: get, set: set, update: function (fn) { return set(fn(get())); } };
+  }
+
+  // mock — seeded random data, so a page asks for 90 days of numbers in one
+  // line instead of writing them out; the same seed gives the same data.
+  var FIRST = ["Ana", "Bruno", "Carla", "Diego", "Eduarda", "Felipe", "Gabriela", "Henrique", "Isabela", "João",
+    "Larissa", "Marcos", "Natália", "Otávio", "Paula", "Rafael", "Sofia", "Thiago", "Vanessa", "Lucas"];
+  var LAST = ["Silva", "Santos", "Oliveira", "Souza", "Pereira", "Costa", "Rodrigues", "Almeida", "Nascimento", "Lima",
+    "Araújo", "Fernandes", "Carvalho", "Gomes", "Martins", "Rocha", "Ribeiro", "Barbosa"];
+  var INITIALS = "ABCDEFGHIJLMNOPRSTV".split("");
+  var CITIES = ["São Paulo, SP", "Rio de Janeiro, RJ", "Belo Horizonte, MG", "Curitiba, PR", "Porto Alegre, RS",
+    "Salvador, BA", "Recife, PE", "Fortaleza, CE", "Brasília, DF", "Goiânia, GO", "Campinas, SP", "Florianópolis, SC",
+    "Manaus, AM", "Belém, PA", "Vitória, ES", "Natal, RN"];
+
+  function createMock(seed) {
+    var state = seed >>> 0;
+    var names = 0;
+    function random() {
+      state = (state + 0x6d2b79f5) >>> 0;
+      var t = state;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    }
+    function int(min, max) { return min + Math.floor(random() * (max - min + 1)); }
+    function pick(list) { return list[Math.floor(random() * list.length)]; }
+    var mock = {
+      seed: function (value) { state = value >>> 0; names = 0; return mock; },
+      random: random,
+      int: int,
+      float: function (min, max, decimals) {
+        var factor = Math.pow(10, decimals == null ? 2 : decimals);
+        return Math.round((min + random() * (max - min)) * factor) / factor;
+      },
+      pick: pick,
+      chance: function (p) { return random() < p; },
+      // There are 360 first/last pairs. A page that draws until the name is
+      // new (do { … } while (used.has(name))) froze the tab past them, so
+      // later draws widen the space: a second surname after 200 (6,480), a
+      // middle initial after 4,000.
+      name: function () {
+        names++;
+        var middle = names > 4000 ? pick(INITIALS) + ". " : "";
+        return pick(FIRST) + " " + middle + (names > 200 ? pick(LAST) + " " : "") + pick(LAST);
+      },
+      city: function () { return pick(CITIES); },
+      // series(n, {start, trend, noise, min, decimals}) — a walk: each value
+      // moves by trend (fraction per step) plus up to ±noise of itself.
+      series: function (n, opts) {
+        opts = opts || {};
+        var value = opts.start == null ? 100 : opts.start;
+        var factor = Math.pow(10, opts.decimals || 0);
+        var out = [];
+        for (var i = 0; i < n; i++) {
+          out.push(Math.max(opts.min == null ? 0 : opts.min, Math.round(value * factor) / factor));
+          value = value * (1 + (opts.trend || 0)) * (1 + (random() * 2 - 1) * (opts.noise == null ? 0.08 : opts.noise));
+        }
+        return out;
+      },
+      // dates(n, {end?, step?: "day" | "week" | "month"}) — ISO dates
+      // (YYYY-MM-DD), oldest first, ending at end (default: today).
+      dates: function (n, opts) {
+        opts = opts || {};
+        var end = opts.end ? new Date(opts.end) : new Date();
+        var out = [];
+        for (var i = n - 1; i >= 0; i--) {
+          var d = new Date(end.getTime());
+          if (opts.step === "month") d.setMonth(d.getMonth() - i);
+          else d.setDate(d.getDate() - i * (opts.step === "week" ? 7 : 1));
+          out.push(d.toISOString().slice(0, 10));
+        }
+        return out;
+      },
+      // rows(n, spec) — n objects; each spec value is a function(i), a list
+      // to pick from, or a constant.
+      rows: function (n, spec) {
+        var out = [];
+        for (var i = 0; i < n; i++) {
+          var row = {};
+          for (var key in spec) {
+            var value = spec[key];
+            row[key] = typeof value === "function" ? value(i) : Array.isArray(value) ? pick(value) : value;
+          }
+          out.push(row);
+        }
+        return out;
+      }
+    };
+    return mock;
+  }
+
+  window.skipShell = { fmt: fmt };
+  window.skipChart = { bar: bar, line: line, donut: donut };
+  window.skipUI = { table: table, kpis: kpis, badge: badge, tabs: tabs, toast: toast };
+  window.skipStore = store;
+  window.skipMock = createMock(20261022);
+})();
+
+</script>
+<style>
+:root {
+  --accent: #265030;
+  --accent-text: #265030;
+  --accent-contrast: #ffffff;
+  --lime: #8CC63F;
+  --lime-strong: #95D809;
+  --ink: #1a2b1f;
+  --muted-ink: #4a5a4f;
+  --green-dark: #265030;
+  font-family: 'Sora', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: #ffffff;
+  font-family: 'Sora', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { color: inherit; }
+h1, h2, h3 { font-family: 'Sora', sans-serif; letter-spacing: -0.02em; }
+
+/* NAVBAR */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--green-dark);
+  transition: box-shadow .3s ease;
+}
+.nav.scrolled { box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 72px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-links {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nav-links a {
+  color: #e8f3e0;
+  text-decoration: none;
+  font-size: .95rem;
+  font-weight: 500;
+  transition: color .2s ease;
+}
+.nav-links a:hover, .nav-links a:focus-visible { color: var(--lime); outline: none; }
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 11px 20px;
+  border-radius: 999px;
+  background: var(--lime-strong);
+  color: #13240f;
+  font-weight: 700;
+  font-size: .9rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.nav-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(149,216,9,.35); }
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 8px;
+  color: #fff;
+}
+.nav-toggle:focus-visible { outline: 2px solid var(--lime); border-radius: 8px; }
+.nav-mobile { display: none; }
+
+@media (max-width: 768px) {
+  .nav-links, .nav-cta { display: none; }
+  .nav-toggle { display: inline-flex; }
+  .nav-mobile {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px 24px;
+    background: var(--green-dark);
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+  .nav-mobile.open { display: flex; }
+  .nav-mobile a { color: #e8f3e0; text-decoration: none; font-weight: 500; }
+  .nav-mobile .nav-cta { display: inline-flex; width: 100%; max-width: 320px; justify-content: center; }
+}
+
+/* LAYOUT */
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+section { padding: 96px 0; }
+.section-light { background: #f4f7f2; }
+.section-dark { background: var(--green-dark); color: #e8f3e0; }
+.section-dark h2, .section-dark h3 { color: #ffffff; }
+.kicker {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(140,198,63,.16);
+  color: var(--green-dark);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.section-dark .kicker { background: rgba(140,198,63,.2); color: var(--lime); }
+.section-head { text-align: center; max-width: 720px; margin: 0 auto 56px; }
+.section-head h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 800; margin: 0 0 14px; line-height: 1.15; }
+.section-head p { color: var(--muted-ink); font-size: 1.05rem; margin: 0; }
+.section-dark .section-head p { color: #c9dcc0; }
+
+.btn-primary, .btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 28px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+  border: 2px solid transparent;
+  font-family: inherit;
+}
+.btn-primary { background: var(--lime-strong); color: #13240f; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(149,216,9,.35); }
+.btn-outline { background: transparent; color: #ffffff; border-color: rgba(255,255,255,.55); }
+.btn-outline:hover { background: rgba(255,255,255,.08); border-color: #fff; }
+.btn-primary:focus-visible, .btn-outline:focus-visible, .btn-dark:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; }
+.btn-dark { background: var(--green-dark); color: #fff; }
+.btn-dark:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(38,80,48,.3); }
+.btn-dark { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: 999px; font-weight: 700; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
+
+/* HERO */
+.hero {
+  background: radial-gradient(circle at 85% 15%, rgba(140,198,63,.18), transparent 45%),
+              radial-gradient(circle at 10% 90%, rgba(149,216,9,.1), transparent 40%),
+              var(--green-dark);
+  color: #e8f3e0;
+  padding: 104px 0 120px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -10% -40% auto;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  border: 1px solid rgba(140,198,63,.18);
+  pointer-events: none;
+}
+.hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; position: relative; z-index: 1; }
+.hero h1 { font-size: clamp(2.1rem, 4.6vw, 3.4rem); line-height: 1.12; font-weight: 800; color: #fff; margin: 0 0 22px; }
+.hero .kicker { background: rgba(140,198,63,.2); color: var(--lime); }
+.hero p.lead { font-size: 1.1rem; color: #d3e6c7; margin: 0 0 32px; max-width: 580px; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 36px; }
+.badges { display: flex; flex-wrap: wrap; gap: 10px; }
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  font-size: .85rem;
+  color: #f0f7ea;
+  font-weight: 500;
+}
+.badge-pill svg { width: 16px; height: 16px; color: var(--lime); flex-shrink: 0; }
+.hero-card {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  padding: 28px;
+  backdrop-filter: blur(6px);
+}
+.hero-card h3 { color: #fff; font-size: 1.05rem; margin: 0 0 6px; }
+.hero-card .sub { color: #bcd3b2; font-size: .9rem; margin: 0 0 20px; }
+.hero-step { display: flex; gap: 14px; padding: 14px 0; border-top: 1px solid rgba(255,255,255,.1); }
+.hero-step:first-of-type { border-top: 0; }
+.hero-step .num { width: 34px; height: 34px; border-radius: 50%; background: var(--lime); color: #13240f; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+.hero-step strong { color: #fff; display: block; font-size: .95rem; }
+.hero-step span { color: #bcd3b2; font-size: .85rem; }
+
+/* CARDS */
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 30px;
+  box-shadow: 0 4px 18px rgba(38,80,48,.07);
+  border: 1px solid rgba(38,80,48,.08);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px rgba(38,80,48,.12); }
+.card .icon-tile {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: rgba(140,198,63,.16);
+  color: var(--green-dark);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.card .icon-tile svg { width: 26px; height: 26px; }
+.card h3 { font-size: 1.15rem; font-weight: 700; margin: 0 0 6px; color: var(--ink); }
+.card .card-sub { color: var(--green-dark); font-size: .85rem; font-weight: 600; margin: 0 0 12px; }
+.card p { color: var(--muted-ink); font-size: .95rem; margin: 0; }
+.card-pain .pain-tag {
+  display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: #8a3b12; background: #fdf0e8; padding: 4px 10px; border-radius: 999px; margin-bottom: 14px;
+}
+.card-pain h3 { margin-bottom: 10px; }
+.card-wide { grid-column: span 3; display: grid; grid-template-columns: auto 1fr; gap: 26px; align-items: center; background: linear-gradient(135deg, #265030, #33663f); color: #e8f3e0; border: 0; }
+.card-wide h3 { color: #fff; }
+.card-wide .card-sub { color: var(--lime); }
+.card-wide p { color: #d3e6c7; }
+.card-wide .icon-tile { background: rgba(140,198,63,.22); color: var(--lime); margin: 0; }
+.diff-tag { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #13240f; background: var(--lime-strong); padding: 4px 10px; border-radius: 999px; margin-bottom: 12px; }
+
+.pain-cta { text-align: center; margin-top: 52px; }
+.pain-cta p { font-size: 1.1rem; font-weight: 600; color: var(--green-dark); margin: 0 0 22px; }
+
+/* DASHBOARD MOCK */
+.dash {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 30px 70px rgba(0,0,0,.35);
+  overflow: hidden;
+  color: var(--ink);
+}
+.dash-head {
+  background: var(--green-dark);
+  color: #fff;
+  padding: 18px 24px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.dash-head h3 { color: #fff; font-size: 1rem; margin: 0; font-weight: 700; }
+.dash-head .sub { color: #bcd3b2; font-size: .8rem; }
+.live {
+  display: inline-flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 700;
+  background: rgba(149,216,9,.18); color: var(--lime); padding: 6px 12px; border-radius: 999px;
+}
+.live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--lime-strong); box-shadow: 0 0 0 0 rgba(149,216,9,.7); animation: livepulse 1.8s infinite; }
+@keyframes livepulse { 0% { box-shadow: 0 0 0 0 rgba(149,216,9,.6);} 70% { box-shadow: 0 0 0 9px rgba(149,216,9,0);} 100% { box-shadow: 0 0 0 0 rgba(149,216,9,0);} }
+.dash-body { padding: 24px; }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+.kpi { background: #f4f7f2; border-radius: 14px; padding: 16px; }
+.kpi .label { font-size: .75rem; color: var(--muted-ink); font-weight: 600; margin-bottom: 6px; }
+.kpi .value { font-size: 1.35rem; font-weight: 800; color: var(--green-dark); line-height: 1.2; }
+.kpi .delta { font-size: .75rem; font-weight: 700; color: #2c7a3f; margin-top: 4px; }
+.chart-title { font-size: .9rem; font-weight: 700; margin: 0 0 4px; }
+.chart-sub { font-size: .8rem; color: var(--muted-ink); margin: 0 0 16px; }
+.legend { display: flex; gap: 16px; font-size: .78rem; color: var(--muted-ink); margin-bottom: 14px; }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+.legend .lg-rev::before { background: #3a9a4a; }
+.legend .lg-exp::before { background: #c8553d; }
+.bars { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; align-items: end; height: 200px; border-bottom: 1px solid #dfe8dc; padding: 0 4px; }
+.bar-group { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; }
+.bar-pair { display: flex; gap: 4px; align-items: flex-end; height: 100%; }
+.bar { width: 16px; border-radius: 6px 6px 0 0; transform-origin: bottom; animation: grow .9s ease both; }
+.bar.rev { background: #3a9a4a; }
+.bar.exp { background: #c8553d; }
+@keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.bar-label { font-size: .75rem; color: var(--muted-ink); margin-top: 8px; font-weight: 600; }
+.dash-note { font-size: .78rem; color: var(--muted-ink); margin-top: 14px; }
+
+.bullets { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
+.bullets li { display: flex; gap: 16px; background: #fff; border-radius: 16px; padding: 20px 22px; box-shadow: 0 4px 16px rgba(38,80,48,.07); }
+.bullets .bi { width: 44px; height: 44px; border-radius: 12px; background: rgba(140,198,63,.16); color: var(--green-dark); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.bullets .bi svg { width: 22px; height: 22px; }
+.bullets h4 { margin: 0 0 4px; font-size: 1rem; font-weight: 600; color: #1a2b1f; opacity: 1; text-shadow: none; mix-blend-mode: normal; }
+.bullets p { margin: 0; color: #3d4d42; font-size: .92rem; font-weight: 400; opacity: 1; text-shadow: none; mix-blend-mode: normal; }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+
+/* TESTIMONIALS */
+.testi { display: flex; flex-direction: column; gap: 16px; }
+.stars { color: #f5b301; letter-spacing: 2px; font-size: 1.1rem; }
+.testi blockquote { margin: 0; font-size: 1rem; color: var(--ink); line-height: 1.7; }
+.testi .who { display: flex; gap: 14px; align-items: center; margin-top: auto; padding-top: 12px; border-top: 1px solid #e6eee2; }
+.avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--green-dark); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .95rem; flex-shrink: 0; }
+.who strong { display: block; font-size: .95rem; }
+.who span { font-size: .82rem; color: var(--muted-ink); }
+
+/* STEPS */
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; position: relative; }
+.step { background: #fff; border-radius: 18px; padding: 28px; box-shadow: 0 4px 18px rgba(38,80,48,.07); position: relative; }
+.step .n { width: 48px; height: 48px; border-radius: 14px; background: var(--green-dark); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; margin-bottom: 18px; }
+.step h3 { font-size: 1.05rem; margin: 0 0 8px; }
+.step p { color: var(--muted-ink); font-size: .92rem; margin: 0; }
+
+/* FAQ */
+.faq-list { display:flex; flex-direction:column; gap:12px; max-width: 860px; margin: 0 auto; }
+.faq-item { background:#fff; border:1px solid rgba(38,80,48,0.12); border-radius:14px; overflow:hidden; position:relative; transition:box-shadow .25s ease, border-color .25s ease; }
+.faq-item:hover { border-color:rgba(38,80,48,0.28); box-shadow:0 6px 20px rgba(38,80,48,0.08); }
+.faq-question { width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; background:transparent; border:0; cursor:pointer; text-align:left; font-family:inherit; font-size:1.0625rem; font-weight:600; line-height:1.45; color:#1a2b1f; position:relative; z-index:2; }
+.faq-question:hover { color:#265030; }
+.faq-question:focus-visible { outline: 3px solid var(--lime); outline-offset: -3px; }
+.faq-icon { flex:0 0 auto; width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:rgba(140,198,63,0.16); color:#265030; font-size:1.25rem; font-weight:700; line-height:1; transition:transform .3s ease, background .3s ease; }
+.faq-answer { display:grid; grid-template-rows:0fr; transition:grid-template-rows .32s ease; position:relative; z-index:1; }
+.faq-answer-inner { overflow:hidden; min-height:0; }
+.faq-answer-inner p { margin:0; padding:0 24px 20px 24px; font-size:0.9688rem; line-height:1.7; color:#4a5a4f; }
+.faq-item.is-open .faq-answer { grid-template-rows:1fr; }
+.faq-item.is-open .faq-icon { transform:rotate(45deg); background:rgba(140,198,63,0.3); }
+.faq-item.is-open { border-color:rgba(140,198,63,0.55); box-shadow:0 8px 24px rgba(38,80,48,0.1); }
+@media (max-width:768px){ .faq-question{padding:16px 18px; font-size:1rem; gap:12px;} .faq-answer-inner p{padding:0 18px 18px 18px; font-size:0.9375rem; line-height:1.65;} .faq-icon{width:26px;height:26px;font-size:1.1rem;} }
+
+/* CTA FINAL */
+.final-cta { background: radial-gradient(circle at 80% 20%, rgba(140,198,63,.2), transparent 45%), var(--green-dark); color: #e8f3e0; text-align: center; }
+.final-cta h2 { color: #fff; font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.15; max-width: 760px; margin: 0 auto 16px; }
+.final-cta .kicker { background: rgba(140,198,63,.2); color: var(--lime); }
+.final-cta p.lead { color: #d3e6c7; max-width: 640px; margin: 0 auto 36px; font-size: 1.05rem; }
+.contact-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 900px; margin: 0 auto 40px; text-align: left; }
+.contact-item { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 22px; }
+.contact-item .lbl { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--lime); font-weight: 700; margin-bottom: 8px; }
+.contact-item strong { color: #fff; font-size: .95rem; display: block; line-height: 1.5; }
+.contact-item h3 { color: #fff; font-size: .98rem; margin: 0 0 10px; }
+.cta-micro { font-size: .85rem; color: #bcd3b2; margin-top: 14px; }
+.cta-big { font-size: 1.1rem; padding: 20px 40px; }
+
+/* FOOTER */
+footer.site-footer { background: var(--green-dark); color: #c9dcc0; padding: 64px 0 36px; border-top: 1px solid rgba(255,255,255,.08); }
+.foot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.foot-grid h4 { color: #fff; font-size: .95rem; font-weight: 700; margin: 0 0 16px; }
+.foot-grid ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.foot-grid a { color: #c9dcc0; text-decoration: none; font-size: .92rem; transition: color .2s ease; }
+.foot-grid a:hover { color: var(--lime); }
+.foot-grid li { font-size: .92rem; line-height: 1.5; }
+.foot-bottom { margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.1); display: grid; gap: 6px; font-size: .85rem; color: #a9c39a; text-align: center; }
+
+/* FLOAT WHATSAPP */
+.wa-float {
+  position: fixed; right: 22px; bottom: 22px; z-index: 200;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: #25d366; color: #fff; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 10px 24px rgba(0,0,0,.25);
+  text-decoration: none;
+  animation: wapulse 2.4s infinite;
+}
+.wa-float svg { width: 30px; height: 30px; }
+.wa-float:focus-visible { outline: 3px solid var(--lime); outline-offset: 4px; }
+@keyframes wapulse {
+  0% { box-shadow: 0 0 0 0 rgba(37,211,102,.55), 0 10px 24px rgba(0,0,0,.25); }
+  70% { box-shadow: 0 0 0 16px rgba(37,211,102,0), 0 10px 24px rgba(0,0,0,.25); }
+  100% { box-shadow: 0 0 0 0 rgba(37,211,102,0), 0 10px 24px rgba(0,0,0,.25); }
+}
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .steps { grid-template-columns: repeat(2, 1fr); }
+  .card-wide { grid-column: span 2; }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 900px) {
+  .hero-grid, .split { grid-template-columns: 1fr; gap: 40px; }
+  .kpis { grid-template-columns: repeat(2, 1fr); }
+  .contact-box { grid-template-columns: 1fr; }
+  .foot-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  section { padding: 72px 0; }
+  .hero { padding: 72px 0 84px; }
+  .grid-4, .grid-3, .grid-2, .steps { grid-template-columns: 1fr; }
+  .card-wide { grid-column: auto; grid-template-columns: 1fr; }
+  .wrap { padding: 0 20px; }
+  .bars { height: 160px; gap: 8px; }
+  .bar { width: 12px; }
+}
+@media print {
+  .nav, .wa-float { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="nav" id="navbar">
+  <div class="nav-inner">
+    <ul class="nav-links">
+      <li><a href="#funcionalidades">Funcionalidades</a></li>
+      <li><a href="#beneficios">Benefícios</a></li>
+      <li><a href="#depoimentos">Depoimentos</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="nav-cta" href="https://wa.me/555981124961?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20do%20Agromais%20para%20meu%20escrit%C3%B3rio%20cont%C3%A1bil." target="_blank" rel="noopener">Solicitar demonstração</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navMobile">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="nav-mobile" id="navMobile">
+    <a href="#funcionalidades">Funcionalidades</a>
+    <a href="#beneficios">Benefícios</a>
+    <a href="#depoimentos">Depoimentos</a>
+    <a href="#faq">FAQ</a>
+    <a class="nav-cta" href="https://wa.me/555981124961?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20do%20Agromais%20para%20meu%20escrit%C3%B3rio%20cont%C3%A1bil." target="_blank" rel="noopener">Solicitar demonstração</a>
+  </div>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="wrap hero-grid">
+    <div class="reveal">
+      <span class="kicker">Software para gestão do agronegócio</span>
+      <h1>A gestão fiscal e financeira do produtor rural, descomplicada para o seu escritório</h1>
+      <p class="lead">O Agromais automatiza a captura de NF-e, gera o Livro-Caixa (LCDPR), integra com o IRPF e organiza a documentação dos seus clientes produtores — com segurança, agilidade e zero erros de digitação.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="https://wa.me/555981124961?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20do%20Agromais%20para%20meu%20escrit%C3%B3rio%20cont%C3%A1bil." target="_blank" rel="noopener">
+          Solicitar demonstração pelo WhatsApp
+        </a>
+        <a class="btn-outline" href="#funcionalidades">Conhecer funcionalidades</a>
+      </div>
+      <div class="badges">
+        <span class="badge-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>NF-e automatizada</span>
+        <span class="badge-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Integração com IRPF</span>
+        <span class="badge-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Rateio automático de parcerias</span>
+      </div>
+    </div>
+    <aside class="hero-card reveal" aria-label="Fluxo de implantação">
+      <h3>Como o escritório começa</h3>
+      <p class="sub">Da primeira conversa à primeira NF-e capturada.</p>
+      <div class="hero-step"><div class="num">1</div><div><strong>Fale com um especialista</strong><span>Atendimento direto pelo WhatsApp</span></div></div>
+      <div class="hero-step"><div class="num">2</div><div><strong>Demonstração guiada</strong><span>Adaptada ao volume de clientes do seu escritório</span></div></div>
+      <div class="hero-step"><div class="num">3</div><div><strong>Cadastro dos produtores</strong><span>CPFs, propriedades e parceiros com suporte dedicado</span></div></div>
+      <div class="hero-step"><div class="num">4</div><div><strong>Rotina automatizada</strong><span>NF-e, LCDPR, IRPF e rateios no mesmo lugar</span></div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- DESAFIOS -->
+<section class="section-light" id="desafios">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Desafios Contábeis</span>
+      <h2>Sua rotina contábil ainda depende de digitação manual?</h2>
+      <p>Atender produtores rurais sem tecnologia especializada sobrecarrega sua equipe com retrabalho, lentidão e risco de autuações fiscais.</p>
+    </div>
+    <div class="grid-4">
+      <article class="card card-pain reveal">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <span class="pain-tag">Horas perdidas</span>
+        <h3>Lançamento manual exaustivo</h3>
+        <p>Centenas de notas fiscais, cupons e recibos entregues em sacos de papel pelos clientes rurais.</p>
+      </article>
+      <article class="card card-pain reveal">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <span class="pain-tag">Erros e retrabalho</span>
+        <h3>Digitação propensa a falhas</h3>
+        <p>Duplicidades e divergências cadastrais que geram inconsistências com o Fisco.</p>
+      </article>
+      <article class="card card-pain reveal">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <span class="pain-tag">Obrigações em risco</span>
+        <h3>Prazos apertados do IRPF e LCDPR</h3>
+        <p>Exigem organização contínua que planilhas e papéis não sustentam.</p>
+      </article>
+      <article class="card card-pain reveal">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M17 11l2 2 4-4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></div>
+        <span class="pain-tag">Parcerias complicadas</span>
+        <h3>Rateio manual entre parceiros</h3>
+        <p>Cálculo complexo de despesas e receitas entre meeiros, arrendatários e condomínios rurais, com alto risco de divergência.</p>
+      </article>
+    </div>
+    <div class="pain-cta reveal">
+      <p>O Agromais resolve isso em uma única plataforma integrada e especializada.</p>
+      <a class="btn-dark" href="https://wa.me/555981124961?text=Ol%C3%A1!%20Quero%20eliminar%20a%20digita%C3%A7%C3%A3o%20manual%20no%20meu%20escrit%C3%B3rio." target="_blank" rel="noopener">Eliminar a digitação manual</a>
+    </div>
+  </div>
+</section>
+
+<!-- FUNCIONALIDADES -->
+<section id="funcionalidades">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Solução Completa</span>
+      <h2>Tudo o que o seu escritório precisa para atender produtores rurais</h2>
+      <p>Módulos nativos desenhados especificamente para a legislação do agronegócio e a rotina contábil brasileira.</p>
+    </div>
+    <div class="grid-3">
+      <article class="card reveal">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></div>
+        <h3>Automação Fiscal</h3>
+        <p class="card-sub">Emissão e captura de NF-e</p>
+        <p>Emissão ágil de notas fiscais eletrônicas próprias e captura 100% automática das NF-e emitidas por terceiros contra os CPFs e CNPJs dos produtores controlados.</p>
+      </article>
+      <article class="card reveal">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <h3>Conformidade LCDPR</h3>
+        <p class="card-sub">Geração Livro-Caixa</p>
+        <p>Geração instantânea do Livro-Caixa Digital do Produtor Rural (LCDPR) no formato exato da Receita Federal e opção para emissão impressa organizada.</p>
+      </article>
+      <article class="card reveal">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg></div>
+        <h3>Sem Digitação</h3>
+        <p class="card-sub">Integração com o IRPF</p>
+        <p>Exportação direta dos lançamentos para o programa oficial de IRPF da Receita Federal, sem digitar nada na ficha da Atividade Rural.</p>
+      </article>
+      <article class="card reveal">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+        <h3>Gestão Contínua</h3>
+        <p class="card-sub">Organização de documentos</p>
+        <p>Documentação e comprovantes do produtor armazenados e catalogados ao longo de todos os meses, sempre prontos para auditorias e para o IRPF.</p>
+      </article>
+      <article class="card reveal">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M15 9.5c0-1.4-1.3-2.5-3-2.5s-3 1.1-3 2.5 1.3 2.2 3 2.5 3 1.1 3 2.5-1.3 2.5-3 2.5-3-1.1-3-2.5"/></svg></div>
+        <h3>Estratégia Tributária</h3>
+        <p class="card-sub">Planejamento tributário</p>
+        <p>Auxílio completo e seguro na decisão entre a folha de pagamento ou o recolhimento sobre a comercialização (Funrural).</p>
+      </article>
+      <article class="card reveal">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <h3>Simulador Inteligente</h3>
+        <p class="card-sub">Análise fiscal</p>
+        <p>Simulação em tempo real: apuração pelo Livro-Caixa real versus regime de Arbitramento (20% da receita bruta).</p>
+      </article>
+      <article class="card card-wide reveal">
+        <div class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg></div>
+        <div>
+          <span class="diff-tag">Diferencial Exclusivo</span>
+          <h3>Rateio automático de parcerias e condomínios</h3>
+          <p class="card-sub" style="color:var(--lime)">Distribuição parametrizada entre CPFs participantes</p>
+          <p>Distribuição automática e parametrizada de todas as despesas e receitas entre pessoas de arranjos produtivos rurais (parcerias, meeirias e condomínios). O sistema gera os percentuais exatos para cada CPF participante sem que você faça cálculos manuais duplicados.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- PAINEL GERENCIAL -->
+<section class="section-dark" id="beneficios">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Painel Gerencial</span>
+      <h2>Resultados e indicadores em tempo real</h2>
+      <p>Transforme a contabilidade do seu cliente rural em uma consultoria de alto valor com números claros de rentabilidade da safra.</p>
+    </div>
+    <div class="split">
+      <div class="dash reveal" role="img" aria-label="Painel Agromais mostrando margem de lucro de 34,8% e receitas superiores às despesas na safra 2024/2025">
+        <div class="dash-head">
+          <div>
+            <h3>Agromais Painel Safra 2024/2025</h3>
+            <div class="sub">Fazenda Boa Esperança</div>
+          </div>
+          <span class="live">Online</span>
+        </div>
+        <div class="dash-body">
+          <div class="kpis">
+            <div class="kpi"><div class="label">Margem de Lucro Safra</div><div class="value">34.8%</div><div class="delta">+4.2%</div></div>
+            <div class="kpi"><div class="label">Receita Bruta Acumulada</div><div class="value">R$ 4.280.000</div><div class="delta">acumulado</div></div>
+            <div class="kpi"><div class="label">Despesas Totais Apuradas</div><div class="value">R$ 2.790.000</div><div class="delta">apuradas</div></div>
+            <div class="kpi"><div class="label">Fluxo de Caixa Líquido</div><div class="value">R$ 1.490.000</div><div class="delta">positivo</div></div>
+          </div>
+          <h4 class="chart-title">Comparativo: Receitas x Despesas da Safra (R$ mil)</h4>
+          <p class="chart-sub">Evolução mensal da safra, de outubro a março.</p>
+          <div class="legend"><span class="lg-rev">Verde = Receita</span><span class="lg-exp">Vermelho = Despesa</span></div>
+          <div class="bars" aria-hidden="true">
+            <div class="bar-group"><div class="bar-pair"><div class="bar rev" style="height:55%"></div><div class="bar exp" style="height:38%"></div></div><div class="bar-label">Out</div></div>
+            <div class="bar-group"><div class="bar-pair"><div class="bar rev" style="height:68%"></div><div class="bar exp" style="height:44%"></div></div><div class="bar-label">Nov</div></div>
+            <div class="bar-group"><div class="bar-pair"><div class="bar rev" style="height:82%"></div><div class="bar exp" style="height:52%"></div></div><div class="bar-label">Dez</div></div>
+            <div class="bar-group"><div class="bar-pair"><div class="bar rev" style="height:95%"></div><div class="bar exp" style="height:60%"></div></div><div class="bar-label">Jan</div></div>
+            <div class="bar-group"><div class="bar-pair"><div class="bar rev" style="height:76%"></div><div class="bar exp" style="height:48%"></div></div><div class="bar-label">Fev</div></div>
+            <div class="bar-group"><div class="bar-pair"><div class="bar rev" style="height:61%"></div><div class="bar exp" style="height:40%"></div></div><div class="bar-label">Mar</div></div>
+          </div>
+          <p class="dash-note">Valores ilustrativos de um painel de demonstração.</p>
+        </div>
+      </div>
+      <ul class="bullets reveal">
+        <li>
+          <span class="bi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+          <div><h4>Indicadores financeiros precisos</h4><p>Visão clara da lucratividade, rentabilidade e margem de lucro por talhão, cultura ou safra completa para orientar o produtor.</p></div>
+        </li>
+        <li>
+          <span class="bi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+          <div><h4>Quadro de receitas e despesas personalizável</h4><p>Agrupamentos flexíveis que atendem tanto à contabilidade gerencial interna quanto às exigências formais de auditoria.</p></div>
+        </li>
+        <li>
+          <span class="bi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
+          <div><h4>Fluxo de caixa projetado e realizado lado a lado</h4><p>Antecipe necessidades financeiras nas épocas de plantio e colheita sem surpresas com compromissos bancários e fornecedores.</p></div>
+        </li>
+        <li>
+          <span class="bi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+          <div><h4>Importação de notas XML com agilidade e segurança</h4><p>Eliminação de digitação manual de notas fiscais com conferência fiscal automática e importação em lotes.</p></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section class="section-light" id="depoimentos">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Depoimentos Reais</span>
+      <h2>Quem usa o Agromais recomenda</h2>
+      <p>Escritórios contábeis de regiões agrícolas de ponta confiam no Agromais para sua operação fiscal e financeira diária.</p>
+    </div>
+    <div class="grid-2">
+      <article class="card testi reveal">
+        <div class="stars" aria-label="5 estrelas">★★★★★</div>
+        <blockquote>“O sistema nos permitiu otimizar processos, com qualidade e segurança. Controle e gestão que geram informações confiáveis para o negócio e para o atendimento fiscal do produtor rural.”</blockquote>
+        <div class="who">
+          <div class="avatar">JK</div>
+          <div><strong>Jacson Kronbauer</strong><span>Supervisor da Equipe Agro, Guaporé Serviços Contábeis Ltda • Santa Rosa - RS</span></div>
+        </div>
+      </article>
+      <article class="card testi reveal">
+        <div class="stars" aria-label="5 estrelas">★★★★★</div>
+        <blockquote>“Agilidade e segurança principalmente na importação das notas XML, zero erros.”</blockquote>
+        <div class="who">
+          <div class="avatar">CB</div>
+          <div><strong>Celso Barbosa</strong><span>Sócio Proprietário, Barbosa Ribeiro Contabilidade • Ponta Porã - MS</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- PASSO A PASSO -->
+<section id="passos">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Passo a Passo</span>
+      <h2>Comece a transformar sua gestão em 4 passos</h2>
+      <p>Sem burocracia ou processos complicados. Sua equipe contábil operacionalizando a ferramenta em tempo recorde.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="n">1</div><h3>Entre em contato</h3><p>Preencha nosso formulário ou chame no WhatsApp para conversar com um especialista em contabilidade do agronegócio.</p></div>
+      <div class="step reveal"><div class="n">2</div><h3>Agende sua demonstração</h3><p>Apresentação prática, guiada e sem compromisso adaptada para a realidade e volume de clientes do seu escritório.</p></div>
+      <div class="step reveal"><div class="n">3</div><h3>Configure seus produtores</h3><p>Cadastro guiado de CPFs, propriedades e parceiros rurais com auxílio direto do nosso time de suporte especializado.</p></div>
+      <div class="step reveal"><div class="n">4</div><h3>Automatize sua rotina</h3><p>Capture NF-e, gere obrigações como LCDPR e IRPF, realize rateios e acompanhe os indicadores em tempo real.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section-light" id="faq">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Dúvidas Comuns</span>
+      <h2>Perguntas frequentes</h2>
+      <p>Tudo o que você precisa saber antes de agendar sua demonstração do Agromais.</p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-1" id="faq-question-1">
+          <span>Para quem o Agromais é indicado?</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer" id="faq-answer-1" role="region" aria-labelledby="faq-question-1">
+          <div class="faq-answer-inner"><p>O Agromais é especialmente desenvolvido para escritórios contábeis que atendem produtores rurais pessoa física e para os próprios produtores que desejam uma gestão fiscal e financeira organizada e integrada ao contador.</p></div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-2" id="faq-question-2">
+          <span>O Agromais substitui o sistema de contabilidade do meu escritório?</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer" id="faq-answer-2" role="region" aria-labelledby="faq-question-2">
+          <div class="faq-answer-inner"><p>Não. Ele não substitui o seu ERP contábil geral. O Agromais é um software especialista na gestão do agronegócio que complementa sua rotina com automações fiscais avançadas (captura de NF-e, Livro-Caixa LCDPR, IRPF Atividade Rural e planejamento tributário específico).</p></div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-3" id="faq-question-3">
+          <span>A integração com o IRPF é automática?</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer" id="faq-answer-3" role="region" aria-labelledby="faq-question-3">
+          <div class="faq-answer-inner"><p>Sim! O Agromais gera os arquivos e exporta os dados diretamente para o programa oficial de IRPF da Receita Federal, sem necessidade de digitação linha a linha na ficha da Atividade Rural.</p></div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-4" id="faq-question-4">
+          <span>Funciona com parcerias e arranjos produtivos?</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer" id="faq-answer-4" role="region" aria-labelledby="faq-question-4">
+          <div class="faq-answer-inner"><p>Com certeza. O sistema possui módulo exclusivo de rateio automático de despesas e receitas entre os envolvidos na proporção cadastrada de condomínio, parceria ou meeiria rural.</p></div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-5" id="faq-question-5">
+          <span>Preciso de treinamento para a minha equipe?</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer" id="faq-answer-5" role="region" aria-labelledby="faq-question-5">
+          <div class="faq-answer-inner"><p>A implantação é totalmente orientada e guiada por especialistas. Nossa equipe de suporte realiza o acompanhamento dos primeiros lançamentos e tira todas as dúvidas para garantir a rápida autonomia do seu time.</p></div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-6" id="faq-question-6">
+          <span>Como faço para testar o software?</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer" id="faq-answer-6" role="region" aria-labelledby="faq-question-6">
+          <div class="faq-answer-inner"><p>Basta chamar no WhatsApp. Nossa equipe agenda uma demonstração gratuita personalizada para você conhecer todos os recursos na prática.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="final-cta" id="contato">
+  <div class="wrap">
+    <span class="kicker reveal">Demonstração Sem Custo</span>
+    <h2 class="reveal">Descubra como o Agromais pode transformar sua gestão.</h2>
+    <p class="lead reveal">Agende uma demonstração gratuita e impulsione os resultados do seu escritório contábil e dos seus clientes produtores rurais.</p>
+    <div class="contact-box reveal">
+      <div class="contact-item">
+        <div class="lbl">Telefone</div>
+        <h3>Atendimento Direto Agromais</h3>
+        <strong>(55) 98112-4961</strong>
+      </div>
+      <div class="contact-item">
+        <div class="lbl">Endereço</div>
+        <h3>Escritório</h3>
+        <strong>R. Rui Barbosa, 135 - Centro, Santa Rosa - RS, 98780-687</strong>
+      </div>
+      <div class="contact-item">
+        <div class="lbl">Redes</div>
+        <h3>Instagram</h3>
+        <strong>@agromais.software</strong>
+      </div>
+    </div>
+    <div class="reveal">
+      <a class="btn-primary cta-big" href="https://wa.me/555981124961?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20do%20Agromais%20para%20meu%20escrit%C3%B3rio%20cont%C3%A1bil." target="_blank" rel="noopener">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.1-1.3c1.5.8 3.2 1.3 4.9 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+        Chamar no WhatsApp
+      </a>
+      <p class="cta-micro">Resposta rápida • Sem compromisso • Atendimento especializado</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- RODAPÉ -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <nav aria-label="Navegação do rodapé">
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="#funcionalidades">Funcionalidades</a></li>
+          <li><a href="#beneficios">Benefícios</a></li>
+          <li><a href="#depoimentos">Depoimentos</a></li>
+          <li><a href="#faq">Perguntas Frequentes</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h4>Soluções</h4>
+        <ul>
+          <li>Livro-Caixa Digital (LCDPR)</li>
+          <li>Captura de NF-e</li>
+          <li>Exportação IRPF Rural</li>
+          <li>Rateio de Parcerias</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contato</h4>
+        <ul>
+          <li>(55) 98112-4961</li>
+          <li>Instagram: @agromais.software</li>
+          <li>R. Rui Barbosa, 135 - Centro, Santa Rosa - RS, 98780-687</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p style="margin:0">© 2026 Agro+. Software para Gestão de Agronegócios. Todos os direitos reservados.</p>
+      <p style="margin:0">Desenvolvido para alta performance no agronegócio brasileiro.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLUTUANTE -->
+<a class="wa-float" href="https://wa.me/555981124961?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20do%20Agromais%20para%20meu%20escrit%C3%B3rio%20cont%C3%A1bil." target="_blank" rel="noopener" aria-label="Falar com a equipe pelo WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.1-1.3c1.5.8 3.2 1.3 4.9 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+</a>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Navbar shadow on scroll
+  var nav = document.getElementById('navbar');
+  window.addEventListener('scroll', function () {
+    nav.classList.toggle('scrolled', window.scrollY > 8);
+  }, { passive: true });
+
+  // Mobile menu
+  var toggle = document.getElementById('navToggle');
+  var mobile = document.getElementById('navMobile');
+  toggle.addEventListener('click', function () {
+    var open = mobile.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  });
+  mobile.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      mobile.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-question').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var item = btn.closest('.faq-item');
+      var isOpen = item.classList.contains('is-open');
+      document.querySelectorAll('.faq-item.is-open').forEach(function (openItem) {
+        if (openItem !== item) {
+          openItem.classList.remove('is-open');
+          var q = openItem.querySelector('.faq-question');
+          if (q) q.setAttribute('aria-expanded', 'false');
+        }
+      });
+      item.classList.toggle('is-open', !isOpen);
+      btn.setAttribute('aria-expanded', String(!isOpen));
+    });
+  });
+
+  // Reveal on scroll
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('visible'); });
+  }
+});
+</script>
+</body>
+</html>
